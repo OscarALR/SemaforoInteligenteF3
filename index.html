@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuadrícula — Lomas del Cacique</title>
+  <link rel="stylesheet" href="semaforo.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+</head>
+<body>
+
+  <header class="encabezado-principal">
+    <h1>🚦 Cuadrícula — Lomas del Cacique 🚦</h1>
+  </header>
+
+  <main class="contenedor-app">
+    
+    <!-- COLUMNA IZQUIERDA: ESCENARIO MAQUETA DE TRÁFICO -->
+    <section class="seccion-maqueta">
+      
+<div class="escenario-trafico">
+        
+    <!-- FILA 1 DE MANZANAS (Arriba) Y CALLES VERTICALES SUPERIORES -->
+    <div class="manzana-cesped" style="grid-column: 1; grid-row: 1;"></div>
+    <div class="calle-tramo-v tramo-borde-superior" style="grid-column: 2; grid-row: 1;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 3; grid-row: 1;"></div>
+    <div class="calle-tramo-v tramo-borde-superior" style="grid-column: 4; grid-row: 1;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 5; grid-row: 1;"></div>
+    <div class="calle-tramo-v tramo-borde-superior" style="grid-column: 6; grid-row: 1;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 7; grid-row: 1;"></div>
+    <div class="calle-tramo-v tramo-borde-superior" style="grid-column: 8; grid-row: 1;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 9; grid-row: 1;"></div>
+
+
+    <!-- ================= FILA 2: NODOS SUPERIORES Y AVENIDA HORIZONTAL ================= -->
+    <div class="calle-tramo-h tramo-borde-izq" style="grid-column: 1; grid-row: 2;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+    <!-- Nodo 0 -->
+    <div class="interseccion" id="nodo-0" style="grid-column: 2; grid-row: 2;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-0"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-0"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-0"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-0"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 1</span>
+    </div>
+
+    <!-- Calle entre Nodo 0 y Nodo 1 -->
+    <div class="calle-tramo-h " style="grid-column: 3; grid-row: 2;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+    <!-- Nodo 1 -->
+    <div class="interseccion" id="nodo-1" style="grid-column: 4; grid-row: 2;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-1"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-1"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-1"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-1"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 2</span>
+    </div>
+
+    <!-- Calle entre Nodo 1 y Nodo 2 -->
+    <div class="calle-tramo-h " style="grid-column: 5; grid-row: 2;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+    <!-- Nodo 2 -->
+    <div class="interseccion" id="nodo-2" style="grid-column: 6; grid-row: 2;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-2"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-2"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-2"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-2"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 3</span>
+    </div>
+
+    <!-- Calle entre Nodo 2 y Nodo 3 -->
+    <div class="calle-tramo-h " style="grid-column: 7; grid-row: 2;">
+      <span class="flecha-h-izquierda">←</span>  
+      <span class="flecha-h-derecha">→</span>
+        
+    </div>
+
+    <!-- Nodo 3 -->
+    <div class="interseccion" id="nodo-3" style="grid-column: 8; grid-row: 2;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-3"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-3"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-3"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-3"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 4</span>
+    </div>
+
+    <div class="calle-tramo-h tramo-borde-der" style="grid-column: 9; grid-row: 2;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+
+    <!-- FILA 3 DE MANZANAS (Medio) Y CALLES VERTICALES CENTRALES -->
+    <div class="manzana-cesped" style="grid-column: 1; grid-row: 3;"></div>
+    <div class="calle-tramo-v" style="grid-column: 2; grid-row: 3;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 3; grid-row: 3;"></div>
+    <div class="calle-tramo-v" style="grid-column: 4; grid-row: 3;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 5; grid-row: 3;"></div>
+    <div class="calle-tramo-v" style="grid-column: 6; grid-row: 3;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 7; grid-row: 3;"></div>
+    <div class="calle-tramo-v" style="grid-column: 8; grid-row: 3;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 9; grid-row: 3;"></div>
+
+
+    <!-- ================= FILA 4: NODOS INFERIORES Y AVENIDA HORIZONTAL ================= -->
+    <div class="calle-tramo-h tramo-borde-izq" style="grid-column: 1; grid-row: 4;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+    <!-- Nodo 4 -->
+    <div class="interseccion" id="nodo-4" style="grid-column: 2; grid-row: 4;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-4"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-4"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-4"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-4"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 5</span>
+    </div>
+
+    <!-- Calle entre Nodo 4 y Nodo 5 -->
+    <div class="calle-tramo-h" style="grid-column: 3; grid-row: 4;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+      
+    </div>
+
+    <!-- Nodo 5 -->
+    <div class="interseccion" id="nodo-5" style="grid-column: 4; grid-row: 4;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-5"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-5"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-5"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-5"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 6</span>
+    </div>
+
+    <!-- Calle entre Nodo 5 y Nodo 6 -->
+    <div class="calle-tramo-h" style="grid-column: 5; grid-row: 4;">
+      <span class="flecha-h-izquierda">←</span>
+      <span class="flecha-h-derecha">→</span>
+    </div>
+
+    <!-- Nodo 6 -->
+    <div class="interseccion" id="nodo-6" style="grid-column: 6; grid-row: 4;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-6"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-6"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-6"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-6"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 7</span>
+    </div>
+
+    <!-- Calle entre Nodo 6 y Nodo 7 -->
+    <div class="calle-tramo-h" style="grid-column: 7; grid-row: 4;">
+      <span class="flecha-h-derecha">→</span>
+      <span class="flecha-h-izquierda">←</span>
+    </div>
+
+    <!-- Nodo 7 -->
+    <div class="interseccion" id="nodo-7" style="grid-column: 8; grid-row: 4;">
+        <div class="cebra cebra-norte"></div><div class="cebra cebra-sur"></div><div class="cebra cebra-este"></div><div class="cebra cebra-oeste"></div>
+        <div class="semaforo sem-norte" id="semNorte-7"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-sur" id="semSur-7"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <div class="semaforo sem-este" id="semEste-7"><span class="luz roja activa"></span><span class="luz amarilla"></span><span class="luz verde"></span></div>
+        <div class="semaforo sem-oeste" id="semOeste-7"><span class="luz roja"></span><span class="luz amarilla"></span><span class="luz verde activa"></span></div>
+        <span class="etiqueta-nodo-inferior">🔅 INT 8</span>
+    </div>
+
+    <div class="calle-tramo-h tramo-borde-der" style="grid-column: 9; grid-row: 4;">
+      <span class="flecha-h-derecha">→</span>
+      <span class="flecha-h-izquierda">←</span>
+    </div>
+
+
+    <!-- FILA 5 DE MANZANAS (Abajo) Y CALLES VERTICALES INFERIORES -->
+    <div class="manzana-cesped" style="grid-column: 1; grid-row: 5;"></div>
+    <div class="calle-tramo-v tramo-borde-inferior" style="grid-column: 2; grid-row: 5;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 3; grid-row: 5;"></div>
+    <div class="calle-tramo-v tramo-borde-inferior" style="grid-column: 4; grid-row: 5;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 5; grid-row: 5;"></div>
+    <div class="calle-tramo-v tramo-borde-inferior" style="grid-column: 6; grid-row: 5;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 7; grid-row: 5;"></div>
+    <div class="calle-tramo-v tramo-borde-inferior" style="grid-column: 8; grid-row: 5;">
+      <span class="flecha-v-abajo">↓</span>
+      <span class="flecha-v-arriba">↑</span>
+    </div>
+    <div class="manzana-cesped" style="grid-column: 9; grid-row: 5;"></div>
+
+</div>
+
+      <!-- BOTONES Y CONTROLES INFERIORES MAQUETA -->
+      <div class="controles-ola">
+        <div class="grupo-botones-principales">
+          <button id="btnOlaVerde">🟢 Activar Ola Verde</button>
+          <button id="btnDesactivarOla">🔴 Desactivar Ola Verde</button>
+          <button id="btnPausarSpawn">⏸️ Pausar Generación de Autos</button>
+          <button id="btnModoNocturno">🌙 Activar Modo Nocturno</button>
+        </div>
+
+        <div class="fila-widgets-secundarios">
+          <div class="monitoreo-ultrasonico">
+            <div class="inputs-titulo">📡 Proximidad Carril Este (ESP32)</div>
+            <div class="barra-contenedor">
+              <div id="barra-proximidad"></div>
+            </div>
+            <div id="txtProximidad" style="font-size: 0.75rem; color: #888;">Esperando señal del ESP32...</div>
+            <!-- Panel de Registro de Eventos -->
+            <div class="contenedor-registro-eventos">
+            <h4 class="titulo-registro">📋 Eventos del Sistema y Hardware</h4>
+            
+            <div id="log-eventos-sistema">
+              <!-- Los eventos aparecerán aquí -->
+            </div>
+          </div>
+          </div>
+
+          <div class="panel-estado-semaforos">
+            <div class="inputs-titulo">🚦 Estado de Semáforos</div>
+            <div id="txtEstadoSemaforos" style="font-size: 0.75rem; color: #00ffcc;">Sistemas Operativos (Sincronizado)</div>
+            <div class="matriz-semaforos-compacta">
+              <div class="cabecera-matriz-compacta"><span>Nodo</span><span>N · S · E · O</span></div>
+              <div id="matrizEstadoSemaforos"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="panel-actividad-sensores">
+        <h3>📡 Actividad de Sensores</h3>
+        <div class="estado-sensores-grid" id="estadoSensoresGrid">
+          <!-- Se genera dinámicamente por script.js -->
+        </div>
+      </section>
+      
+    </section>
+    
+
+    <!-- COLUMNA DERECHA: DASHBOARD DE NAVEGACIÓN Y ESTADÍSTICAS -->
+    <aside class="panel-lateral">
+      
+      <div class="tarjeta-panel">
+        <h3>📊Dashboard de Estadísticas</h3>
+        <div class="grid-stats">
+          <div class="stat-box">
+            <span class="stat-numero" id="statVehiculos">0</span>
+            <span class="stat-label">Total Vehículos</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-numero" id="statTiempoEspera">0s</span>
+            <span class="stat-label">Espera Prom.</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-numero" id="statEsperandoAhora">0</span>
+            <span class="stat-label">Esperando</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-numero" id="statEmergencias">0</span>
+            <span class="stat-label">Emergencias</span>
+          </div>
+        </div>
+
+        <div class="contenedor-grafica">
+          <div class="grafica-titulo">Histórico de tráfico (autos esperando)</div>
+          <div class="grafica-marco">
+            <canvas id="graficaTrafico" height="120"></canvas>
+            <span class="grafica-periodo">últimos 150 s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tarjeta-panel">
+        <h3>🚑 Panel de Emergencia</h3>
+        <button id="btnAmbulancia" class="btn-emergencia">Enviar Ambulancia</button>
+        <p id="estado-ambulancia" class="texto-estado">🚑 Ruta de emergencia prioritaria lista.</p>
+      </div>
+
+      <div class="tarjeta-panel">
+        <h3>🚨 Coordinación de Semáforos (Fase 3)</h3>
+        <div class="titulo-modulo-control">Simular incidente / choque</div>
+        <div class="formulario-vehiculo-manual">
+          <select id="selectIncidenteNodo" aria-label="Intersección del incidente">
+            <option value="0">Intersección 1</option>
+            <option value="1">Intersección 2</option>
+            <option value="2">Intersección 3</option>
+            <option value="3">Intersección 4</option>
+            <option value="4">Intersección 5</option>
+            <option value="5">Intersección 6</option>
+            <option value="6">Intersección 7</option>
+            <option value="7">Intersección 8</option>
+          </select>
+          <button id="btnSimularIncidente" class="btn-secundario" style="background:#a93226;">🚨 Simular choque</button>
+        </div>
+        <button id="btnDespejarIncidentes" class="btn-secundario">✅ Despejar todos los incidentes</button>
+        <div class="resumen-sensores" id="resumenIncidentes" style="margin-top:8px;">Sin incidentes activos.</div>
+        <div class="diagnostico-grid" id="logIncidentes" style="margin-top:8px; max-height:150px; overflow-y:auto;"></div>
+      </div>
+
+      <div class="tarjeta-panel">
+        <h3>🎮 Control Manual de Tráfico</h3>
+        <div class="titulo-modulo-control">Agregar vehículos</div>
+        <div class="formulario-vehiculo-manual">
+          <select id="selectTipoVehiculo" aria-label="Tipo de vehículo">
+            <option value="auto">Auto</option>
+            <option value="camion">Camión</option>
+          </select>
+          <input id="inputPlacaVehiculo" type="text" maxlength="10" placeholder="Placa (opcional)">
+          <select id="selectEntradaVehiculo" aria-label="Entrada del vehículo">
+            <option value="este">ENT-O · Boulevard Oeste</option>
+            <option value="oeste">ENT-E · Boulevard Este</option>
+            <option value="sur">ENT-N · Avenida Norte</option>
+            <option value="norte">ENT-S · Avenida Sur</option>
+          </select>
+          <select id="selectCarrilVehiculo" aria-label="Carril o ruta"></select>
+          <select id="selectSalidaVehiculo" aria-label="Salida del vehículo" disabled></select>
+          <div class="campo-informativo">Ruta directa por la cuadrícula</div>
+        </div>
+        <button id="btnInyectarVehiculos" class="btn-secundario">＋ Agregar vehículo</button>
+      </div>
+
+      <div class="tarjeta-panel panel-sensores-compacto">
+        <h3>🚶 Control peatonal</h3>
+        <div class="resumen-sensores" id="resumenSensores">Sensores activos: 0 / 40</div>
+        <div class="controles-peatonales" aria-label="Agregar peatón">
+          <select id="selectPeatonNodo" aria-label="Intersección">
+            <option value="0">Intersección 1</option><option value="1">Intersección 2</option>
+            <option value="2">Intersección 3</option><option value="3">Intersección 4</option>
+            <option value="4">Intersección 5</option><option value="5">Intersección 6</option>
+            <option value="6">Intersección 7</option><option value="7">Intersección 8</option>
+          </select>
+          <select id="selectPeatonLado" aria-label="Punto de partida">
+            <option value="norte">Desde norte</option><option value="sur">Desde sur</option>
+            <option value="este">Desde este</option><option value="oeste">Desde oeste</option>
+          </select>
+        </div>
+        <button id="btnAgregarPeaton" class="btn-secundario">🚶 Agregar peatón</button>
+      </div>
+
+      <div class="tarjeta-panel registro-actividad">
+        <h3>▣ Registro de actividad</h3>
+        <div class="diagnostico-grid" id="diagnosticoGrid" aria-live="polite">
+          <!-- Se actualiza dinámicamente por script.js -->
+        </div>
+      </div>
+      
+    </aside>
+    
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

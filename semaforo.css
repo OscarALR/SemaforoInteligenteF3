@@ -1,0 +1,1084 @@
+/* ===================================================
+   1. RESET Y ESTILOS GENERALES
+=================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #121913;
+    background-color: #305a38;
+    font-family: "Rubik", sans-serif;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.025) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 2px, transparent 2px),
+
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size:
+        160px 160px,
+        160px 160px,
+        40px 40px,
+        40px 40px;
+    color: #e0e0e0;
+    padding: 20px;
+    min-height: 100vh;
+    transition: background 1s ease; 
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+button {
+    font-family: "Rubik", sans-serif;
+}
+body.modo-nocturno {
+    background-color: #0d1b0f;
+    transition: background 1s ease;
+}
+
+body.modo-nocturno {
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, white, transparent),
+        radial-gradient(1px 1px at 60px 80px, white, transparent),
+        radial-gradient(1px 1px at 120px 40px, white, transparent),
+        radial-gradient(1px 1px at 200px 90px, white, transparent),
+        radial-gradient(1px 1px at 280px 20px, white, transparent);
+    background-size: 300px 150px;
+    background-repeat: repeat;
+    flood-opacity: normal;
+}
+
+.modo-nocturno .manzana-cesped {
+    background: #1a2e1c;
+}
+
+.modo-nocturno .escenario-trafico {
+    background-color: #1a1a1a;
+}
+
+.modo-nocturno .interseccion,
+.modo-nocturno .calle-tramo-h,
+.modo-nocturno .calle-tramo-v {
+    background-color: #1a1a1a;
+}
+
+.encabezado-principal h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+
+
+
+
+
+/* ===================================================
+   2. CONTENEDOR PRINCIPAL (LAYOUT EN 2 COLUMNAS)
+=================================================== */
+.contenedor-app {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    max-width: 1600px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+.seccion-maqueta {
+    flex: 1.8;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.panel-lateral {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 320px;
+}
+
+/* ===================================================
+   3. ESCENARIO VIAL EN CSS GRID
+=================================================== */
+.escenario-trafico {
+    background-color: #383838; /* El fondo oscuro hace de calle */
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid;
+    /* 9 Columnas: Manzana(1fr) | Calle(80px) | Manzana(1fr) ... */
+    grid-template-columns: 1fr 80px 1fr 80px 1fr 80px 1fr 80px 1fr;
+    /* 5 Filas: Manzana(160px) | Calle(80px) | Manzana(160px) ... */
+    grid-template-rows: 160px 80px 160px 80px 160px;
+    gap: 0; /* Ya no usamos gap, las calles son parte del grid */
+    position: relative;
+}
+
+.manzana-cesped {
+    background: #4a7c4e;
+    border: 8px solid #b5b5b0;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    background-image:
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0, rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px);
+    transition: background 1s ease;
+}
+
+/* ===================================================
+   4. MARCAS VIALES Y ELEMENTOS DE TRAFICO
+=================================================== */
+.linea-amarilla-h {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: repeating-linear-gradient(
+        90deg, 
+        #f1c40f 0, 
+        #f1c40f 15px, 
+        transparent 15px, 
+        transparent 28px
+    );
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.linea-amarilla-v {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg, 
+        #f1c40f 0, 
+        #f1c40f 15px, 
+        transparent 15px, 
+        transparent 28px
+    );
+    transform: translateX(-50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.centro-interseccion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: #00ffcc;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px #00ffcc;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.flecha-direccion {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 14px;
+    font-weight: bold;
+    user-select: none;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Posiciones de las flechas dentro de cada carril del nodo */
+.flecha-norte { top: 18px; left: 25%; transform: translateX(-50%) rotate(180deg); }
+.flecha-sur { bottom: 18px; right: 25%; transform: translateX(50%); }
+.flecha-este { right: 18px; top: 25%; transform: translateY(-50%); }
+.flecha-oeste { left: 18px; bottom: 25%; transform: translateY(50%) rotate(180deg); }
+
+.interseccion {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #383838;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.cebra {
+    position: absolute;
+    z-index: 3;
+}
+
+.cebra-norte {
+    bottom: 82px;
+    left: 4px;
+    width: 100%;
+    height: 12px;
+    background: repeating-linear-gradient(
+        90deg, 
+        #ffffff 0, 
+        #ffffff 8px, 
+        transparent 8px, 
+        transparent 16px
+    );
+}
+
+.cebra-sur {
+    top: 82px;
+    left: 4px;
+    width: 80px;
+    height: 12px;
+    background: repeating-linear-gradient(
+        90deg, 
+        #ffffff 0, 
+        #ffffff 8px, 
+        transparent 8px, 
+        transparent 16px
+    );
+}
+
+.cebra-este {
+    left: 82px;
+    top: -4px;
+    width: 12px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg, 
+        #ffffff 0, 
+        #ffffff 8px, 
+        transparent 8px, 
+        transparent 16px
+    );
+}
+
+.cebra-oeste {
+    right: 82px;
+    top: -4px;
+    width: 12px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg, 
+        #ffffff 0, 
+        #ffffff 8px, 
+        transparent 8px, 
+        transparent 16px
+    );
+}
+
+.flecha {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    font-weight: bold;
+    user-select: none;
+    z-index: 2;
+}
+
+/* ===================================================
+   TRAMOS DE CALLE (Entre Manzanas e Intersecciones)
+=================================================== */
+
+/* Tramos Horizontales */
+.calle-tramo-h {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #383838;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.calle-tramo-h::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    right: 14px;
+    height: 3px;
+    transform: translateY(-50%);
+    background: repeating-linear-gradient(
+        90deg,
+        #f1c40f,
+        #f1c40f 12px,
+        transparent 12px,
+        transparent 20px
+    );
+} /* Línea amarilla continua o discontinua */
+
+
+/* Flechas en tramo horizontal */
+.flecha-h-derecha {
+    position: absolute;
+    bottom: 15%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.flecha-h-izquierda {
+    position: absolute;
+    top: 15%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+/* Tramos Verticales */
+.calle-tramo-v {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #383838;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.calle-tramo-v::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        180deg,
+        #f1c40f,
+        #f1c40f 12px,
+        transparent 12px,
+        transparent 20px
+    );
+}
+
+/* Flechas en tramo vertical */
+.flecha-v-abajo {
+    position: absolute;
+    left: 15%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.flecha-v-arriba {
+    position: absolute;
+    right: 15%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* ===================================================
+   5. SEMAFOROS Y NOMBRES DE NODOS
+=================================================== */
+.semaforo {
+    position: absolute;
+    background: #111111;
+    padding: 3px;
+    border-radius: 4px;
+    display: flex;
+    gap: 3px;
+    z-index: 6;
+    border: 1px solid #555555;
+}
+
+.semaforo .luz {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #222222;
+}
+
+.semaforo .luz.roja.activa {
+    background-color: #ff3333;
+    box-shadow: 0 0 6px #ff3333;
+}
+
+.semaforo .luz.amarilla.activa {
+    background-color: #ffcc00;
+    box-shadow: 0 0 6px #ffcc00;
+}
+
+.semaforo .luz.verde.activa {
+    background-color: #00ff66;
+    box-shadow: 0 0 6px #00ff66;
+}
+
+.sem-norte {
+    top: -35px;
+    right: -12px;
+    flex-direction: column;
+}
+
+.sem-sur {
+    bottom: -35px;
+    left: -12px;
+    flex-direction: column-reverse;
+}
+
+.sem-este {
+    top: -12px;
+    left: -35px;
+    flex-direction: row;
+}
+
+.sem-oeste {
+    bottom: -12px;
+    right: -35px;
+    flex-direction: row-reverse;
+}
+
+.etiqueta-nodo-inferior {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0f1410;
+    color: #00ffcc;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid #00ffcc;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* ===================================================
+   6. SECCIÓN INFERIOR DE CONTROLES E INPUTS
+=================================================== */
+.controles-ola {
+    background: #1e2620;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #2d3b2f;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.grupo-botones-principales {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.grupo-botones-principales button {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    background: #2a382c;
+    color: #ffffff;
+    border: 1px solid #3d5240;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.grupo-botones-principales button:hover {
+    background: #364839;
+}
+
+.fila-widgets-secundarios {
+    display: flex;
+    gap: 15px;
+}
+
+.monitoreo-ultrasonico, 
+.panel-estado-semaforos {
+    flex: 1;
+    background: #161c17;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #28342a;
+}
+
+.inputs-titulo {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    margin-bottom: 8px;
+}
+
+.barra-contenedor {
+    width: 100%;
+    height: 12px;
+    background: #222222;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+#barra-proximidad {
+    width: 0%;
+    height: 100%;
+    background: #00ffcc;
+    transition: width 0.3s;
+}
+
+/* ===================================================
+   7. DASHBOARD Y PANEL LATERAL DERECHO
+=================================================== */
+.tarjeta-panel {
+    background: #1e2620;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #2d3b2f;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tarjeta-panel h3 {
+    margin-top: 0;
+    color: #ffffff;
+    font-size: 1.05rem;
+    border-bottom: 1px solid #2d3b2f;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.grid-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.stat-box {
+    background: #141a15;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0,3);
+    border: 1px solid #222d23;
+    transition: transform 0.2s ease;
+    overflow: hidden;
+}
+
+
+.stat-numero {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* ✅ CÓDIGO CORREGIDO: Apunta a la tarjeta (.stat-box) completa */
+.grid-stats .stat-box:nth-child(1) { 
+    border-left: 4px solid #3498db; /* Azul */
+}
+
+.grid-stats .stat-box:nth-child(2) { 
+    border-left: 4px solid #2ecc71; /* Verde */
+}
+
+.grid-stats .stat-box:nth-child(3) { 
+    border-left: 4px solid #f1c40f; /* Amarillo */
+}
+
+.grid-stats .stat-box:nth-child(4) { 
+    border-left: 4px solid #e74c3c; /* Rojo */
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #888888;
+}
+
+.contenedor-grafica {
+    margin-top: 15px;
+    padding: 11px 10px 7px;
+    border-radius: 8px;
+    background: #2a2a2a;
+}
+
+.grafica-titulo {
+    margin-bottom: 5px;
+    color: #b5a890;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .035em;
+    line-height: 1.35;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.grafica-marco {
+    position: relative;
+}
+
+#graficaTrafico {
+    display: block;
+    width: 100%;
+    height: 120px;
+}
+
+.grafica-periodo {
+    position: absolute;
+    right: 3px;
+    bottom: 0;
+    color: #777777;
+    font-size: .58rem;
+}
+
+.diagnostico-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.diagnostico-grupo {
+    background: #141a15;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.grupo-titulo {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.diagnostico-item {
+    font-size: 0.75rem;
+    color: #aaaaaa;
+}
+
+.btn-emergencia {
+    width: 100%;
+    padding: 12px;
+    background: #a93226;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-emergencia:hover {
+    background: #c0392b;
+}
+
+.texto-emergencia-info {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    margin-top: 8px;
+}
+
+.inputs-manuales-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+}
+
+.inputs-manuales-grid input {
+    width: 100%;
+    background: #141a15;
+    border: 1px solid #2d3b2f;
+    color: #ffffff;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.btn-secundario {
+    width: 100%;
+    padding: 8px;
+    background: #27ae60;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-secundario:hover {
+    background: #2ecc71;
+}
+
+/* ===================================================
+   EXTREMOS DEL MAPA (Líneas hasta la orilla)
+=================================================== */
+
+/* Borde Izquierdo del mapa: la línea pega al borde izquierdo (0) */
+.tramo-borde-izq::before {
+    left: 0px !important;
+}
+
+/* Borde Derecho del mapa: la línea pega al borde derecho (0) */
+.tramo-borde-der::before {
+    right: 0px !important;
+}
+
+/* Borde Superior del mapa: la línea pega al borde superior (0) */
+.tramo-borde-superior::before {
+    top: 0px !important;
+}
+
+/* Borde Inferior del mapa: la línea pega al borde inferior (0) */
+.tramo-borde-inferior::before {
+    bottom: 0px !important;
+}
+
+.led-matriz {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.led-matriz.roja { background-color: #ff3b30; box-shadow: 0 0 5px #ff3b30; }
+.led-matriz.verde { background-color: #34c759; box-shadow: 0 0 5px #34c759; }
+.led-matriz.amarilla { background-color: #ffcc00; box-shadow: 0 0 5px #ffcc00; }
+
+/* Panel de actividad de sensores */
+.panel-actividad-sensores {
+    background: #1e2620;
+    border: 1px solid #2d3b2f;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.panel-actividad-sensores h3 {
+    color: #eaf2f0;
+    font-size: 1.05rem;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.estado-sensores-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(145px, 1fr));
+    gap: 10px;
+}
+
+.tarjeta-sensor-estado {
+    background: #141a15;
+    border: 1px solid #28342a;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.tarjeta-sensor-estado h4 {
+    color: #a0a0a0;
+    font-size: .72rem;
+    letter-spacing: .04em;
+    margin-bottom: 7px;
+    text-align: center;
+}
+
+.fila-sensor-estado {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #d7d7d7;
+    font-size: .7rem;
+    line-height: 1.65;
+}
+
+.indicador-sensor-estado {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+    background: #4a4a4a;
+    transition: background .2s, box-shadow .2s;
+}
+
+.indicador-sensor-estado.activo {
+    background: #2ecc71;
+    box-shadow: 0 0 8px #2ecc71;
+}
+
+@media (max-width: 900px) {
+    .contenedor-app { flex-direction: column; }
+    .seccion-maqueta { width: 100%; overflow-x: auto; padding-bottom: 8px; }
+    .escenario-trafico { min-width: 720px; }
+    .panel-lateral { width: 100%; min-width: 0; }
+    .estado-sensores-grid { grid-template-columns: repeat(2, minmax(145px, 1fr)); }
+}
+
+/* Paneles compactos de operación */
+.panel-estado-semaforos {
+    min-width: 0;
+}
+
+.matriz-semaforos-compacta {
+    margin-top: 8px;
+}
+
+.cabecera-matriz-compacta,
+#matrizEstadoSemaforos > div {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.cabecera-matriz-compacta {
+    padding: 0 0 5px;
+    border-bottom: 1px solid #2d3b2f;
+    color: #858f87;
+    font-size: .65rem;
+    text-transform: uppercase;
+}
+
+#matrizEstadoSemaforos > div {
+    padding: 4px 0 !important;
+    font-size: .72rem;
+}
+
+.panel-sensores-compacto {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.panel-sensores-compacto h3,
+.registro-actividad h3 {
+    margin-bottom: 0;
+}
+
+.titulo-modulo-control {
+    margin-top: 2px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2d3b2f;
+    color: #a9b5ab;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.texto-modulo-control {
+    margin: 7px 0 9px;
+    color: #7f8c81;
+    font-size: .7rem;
+    line-height: 1.35;
+}
+
+.formulario-vehiculo-manual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.formulario-vehiculo-manual select,
+.formulario-vehiculo-manual input,
+.campo-informativo {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #2d3b2f;
+    border-radius: 6px;
+    background: #141a15;
+    color: #e0e0e0;
+    font: inherit;
+    font-size: .72rem;
+}
+
+.formulario-vehiculo-manual select:focus,
+.formulario-vehiculo-manual input:focus {
+    outline: none;
+    border-color: #00b894;
+    box-shadow: 0 0 0 2px rgba(0, 255, 204, .12);
+}
+
+.formulario-vehiculo-manual select:disabled {
+    color: #9aa49c;
+    opacity: 1;
+}
+
+.campo-informativo {
+    display: flex;
+    align-items: center;
+    color: #89958b;
+}
+
+.resumen-sensores {
+    padding: 8px 10px;
+    background: #141a15;
+    border: 1px solid #28342a;
+    border-radius: 6px;
+    color: #a9b5ab;
+    font-size: .75rem;
+}
+
+.controles-peatonales {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.controles-peatonales select {
+    width: 100%;
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid #2d3b2f;
+    border-radius: 6px;
+    background: #141a15;
+    color: #e0e0e0;
+    font: inherit;
+    font-size: .72rem;
+}
+
+.panel-sensores-compacto .btn-secundario {
+    padding: 9px;
+    font-size: .76rem;
+}
+
+.registro-actividad .diagnostico-grid {
+    max-height: 175px;
+    overflow-y: auto;
+    padding: 9px;
+    gap: 6px;
+    background: #111711;
+    border: 1px solid #28342a;
+    border-radius: 6px;
+    scrollbar-color: #3d5240 #111711;
+}
+
+.registro-actividad .diagnostico-item {
+    padding: 0;
+    color: #b8c6ba;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .68rem;
+    line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+    .controles-peatonales { grid-template-columns: 1fr; }
+    .formulario-vehiculo-manual { grid-template-columns: 1fr; }
+}
+
+
+.grafica-historico {
+    margin-top: 15px;
+    background: #2c2c2c;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+#graficaTrafico {
+    width: 100%;
+    display: block;
+}
+
+.texto-estado {
+  color: #ffcc00; /* Amarillo/Dorado como en tus capturas */
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* ===================================================
+   FASE 3 — INCIDENTES Y COORDINACIÓN ENTRE SEMÁFOROS
+=================================================== */
+.interseccion.bloqueada {
+    outline: 3px solid #ff3b30;
+    outline-offset: -3px;
+    animation: parpadeo-incidente 1s ease-in-out infinite;
+}
+
+@keyframes parpadeo-incidente {
+    0%, 100% { outline-color: #ff3b30; }
+    50% { outline-color: rgba(255, 59, 48, 0.15); }
+}
+
+.log-incidente-item {
+    padding: 5px 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: .68rem;
+    line-height: 1.4;
+    background: #2a1414;
+    color: #ff9d90;
+}
+
+.log-incidente-item.info {
+    background: #10201a;
+    color: #7fe0bd;
+}
+
+.barra-proximidad-fill {
+    height: 100%;
+    border-radius: 10px;
+    /* Transición suave para el ancho y el cambio de color */
+    transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+/* =========================================
+   PANEL DE REGISTRO DE EVENTOS Y HARDWARE
+   ========================================= */
+
+.contenedor-registro-eventos {
+  margin-top: 15px;
+}
+
+.titulo-registro {
+  color: #ccc;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+#log-eventos-sistema {
+  background-color: #151515;
+  padding: 12px;
+  border-radius: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.85em;
+  border: 1px solid #333;
+}
+
+/* Estilos base para cada línea del registro */
+.evento-log {
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed #2a2a2a;
+  line-height: 1.4;
+}
+
+.evento-log:last-child {
+  border-bottom: none;
+}
+
+/* Clases de colores según el tipo de evento */
+.log-ambulancia { 
+  color: #ff6b6b; /* Rojo suave/Salmón */
+} 
+
+.log-ambulancia-rfid { 
+  color: #4dabf7; /* Azul claro para diferenciar la ESP32 */
+}
+
+.log-hardware { 
+  color: #4dabf7; /* Azul claro para Wokwi/ESP32 */
+}   
+.log-alerta { 
+  color: #fcc419; /* Amarillo para advertencias */
+}     
+.log-general { 
+  color: #a0a0a0; /* Gris para el sistema general */
+}
