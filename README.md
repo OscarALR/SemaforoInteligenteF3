@@ -111,4 +111,6 @@ Los ciclos semafóricos alternan los pares norte-sur y este-oeste. El tiempo de 
 ## Autoría
 Subido en GitHub Pages: https://oscaralr.github.io/SemaforoInteligenteF3/
 
+Para clonar el proyecto desarrollado en Wokwi, pueden copiar directamente del siguiente link: https://wokwi.com/projects/470595757282265089
+
 Desarrollado por [OscarALR](https://github.com/OscarALR) como proyecto universitario de simulación de tráfico inteligente.
