@@ -73,10 +73,6 @@ body.modo-nocturno {
 }
 
 
-
-
-
-
 /* ===================================================
    2. CONTENEDOR PRINCIPAL (LAYOUT EN 2 COLUMNAS)
 =================================================== */
@@ -578,21 +574,20 @@ body.modo-nocturno {
     color: #ffffff;
 }
 
-/* ✅ CÓDIGO CORREGIDO: Apunta a la tarjeta (.stat-box) completa */
 .grid-stats .stat-box:nth-child(1) { 
-    border-left: 4px solid #3498db; /* Azul */
+    border-left: 4px solid #3498db; 
 }
 
 .grid-stats .stat-box:nth-child(2) { 
-    border-left: 4px solid #2ecc71; /* Verde */
+    border-left: 4px solid #2ecc71; 
 }
 
 .grid-stats .stat-box:nth-child(3) { 
-    border-left: 4px solid #f1c40f; /* Amarillo */
+    border-left: 4px solid #f1c40f; 
 }
 
 .grid-stats .stat-box:nth-child(4) { 
-    border-left: 4px solid #e74c3c; /* Rojo */
+    border-left: 4px solid #e74c3c; 
 }
 
 .stat-label {
@@ -718,22 +713,18 @@ body.modo-nocturno {
    EXTREMOS DEL MAPA (Líneas hasta la orilla)
 =================================================== */
 
-/* Borde Izquierdo del mapa: la línea pega al borde izquierdo (0) */
 .tramo-borde-izq::before {
     left: 0px !important;
 }
 
-/* Borde Derecho del mapa: la línea pega al borde derecho (0) */
 .tramo-borde-der::before {
     right: 0px !important;
 }
 
-/* Borde Superior del mapa: la línea pega al borde superior (0) */
 .tramo-borde-superior::before {
     top: 0px !important;
 }
 
-/* Borde Inferior del mapa: la línea pega al borde inferior (0) */
 .tramo-borde-inferior::before {
     bottom: 0px !important;
 }
@@ -984,7 +975,7 @@ body.modo-nocturno {
 }
 
 .texto-estado {
-  color: #ffcc00; /* Amarillo/Dorado como en tus capturas */
+  color: #ffcc00;
   font-weight: bold;
   font-size: 0.9rem;
   margin-top: 8px;
@@ -1022,7 +1013,6 @@ body.modo-nocturno {
 .barra-proximidad-fill {
     height: 100%;
     border-radius: 10px;
-    /* Transición suave para el ancho y el cambio de color */
     transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
@@ -1052,7 +1042,6 @@ body.modo-nocturno {
   border: 1px solid #333;
 }
 
-/* Estilos base para cada línea del registro */
 .evento-log {
   margin-bottom: 6px;
   padding-bottom: 4px;
@@ -1066,19 +1055,19 @@ body.modo-nocturno {
 
 /* Clases de colores según el tipo de evento */
 .log-ambulancia { 
-  color: #ff6b6b; /* Rojo suave/Salmón */
+  color: #ff6b6b;
 } 
 
 .log-ambulancia-rfid { 
-  color: #4dabf7; /* Azul claro para diferenciar la ESP32 */
+  color: #4dabf7; 
 }
 
 .log-hardware { 
-  color: #4dabf7; /* Azul claro para Wokwi/ESP32 */
+  color: #4dabf7; 
 }   
 .log-alerta { 
-  color: #fcc419; /* Amarillo para advertencias */
+  color: #fcc419; 
 }     
 .log-general { 
-  color: #a0a0a0; /* Gris para el sistema general */
+  color: #a0a0a0; 
 }
