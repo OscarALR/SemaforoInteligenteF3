@@ -22,8 +22,6 @@ const intersecciones = Array.from({ length: NUM_NODOS }, (_, indice) => ({
   emergencia: null,
   peaton: null,
   semaforos: { ...ESTADO_INICIAL },
-  // Conteo REAL de autos detenidos por dirección (no solo "hay o no hay"),
-  // usado para que el verde responda a la cantidad de tráfico de verdad.
   colaPorDireccion: { norte: 0, sur: 0, este: 0, oeste: 0 },
 }));
 
@@ -35,7 +33,6 @@ let historialTrafico = [];
 const INTERVALO_MOVIMIENTO_MS = 50;
 const VELOCIDAD_AUTO = 0.45;
 const VELOCIDAD_EMERGENCIA = 0.8;
-// La línea de alto queda antes de la cebra, no dentro de la intersección.
 const DISTANCIA_ANTES_CEBRA_PX = 55;
 const DISTANCIA_MINIMA_AUTOS_PX = 34;
 const RADIO_SENSOR_CENTRAL_PX = 95;
@@ -45,11 +42,6 @@ const nodoElemento = (indice) => elemento(`nodo-${indice}`);
 const esVertical = (direccion) => direccion === 'norte' || direccion === 'sur';
 const parDe = (direccion) => esVertical(direccion) ? 'NS' : 'EW';
 
-/* ===================================================
-   FASE 3 — GRAFO DE LA CUADRÍCULA Y COORDINACIÓN ENTRE NODOS
-   Fila superior: nodos 0-1-2-3.  Fila inferior: nodos 4-5-6-7.
-   Columnas verticales: (0,4) (1,5) (2,6) (3,7).
-=================================================== */
 const GRAFO = {
   0: { este: 1, sur: 4 },
   1: { oeste: 0, este: 2, sur: 5 },
@@ -61,9 +53,6 @@ const GRAFO = {
   7: { norte: 3, oeste: 6 },
 };
 
-// Carriles paralelos disponibles para cada tipo de movimiento. El motor
-// visual sólo anima trayectos rectos, así que el algoritmo elige entre
-// estas alternativas en vez de generar giros dentro de una misma ruta.
 const CARRILES_HORIZONTALES = [[0, 1, 2, 3], [4, 5, 6, 7]];
 const CARRILES_VERTICALES = [[0, 4], [1, 5], [2, 6], [3, 7]];
 
@@ -90,10 +79,6 @@ function medirColas() {
   return colas;
 }
 
-// Igual que medirColas, pero desglosado por dirección de llegada. Esto es
-// lo que le permite al semáforo saber no solo "hay alguien esperando" sino
-// "hay 4 autos esperando desde el norte y 0 desde el sur", para que el
-// verde responda a la cantidad real de tráfico en vez de a un simple sí/no.
 function medirColasPorDireccion() {
   const colas = {};
   intersecciones.forEach((interseccion) => {
@@ -119,10 +104,6 @@ function pesoArista(a, b, colas) {
   return 1 + congestion * 1.5;
 }
 
-// Dijkstra genérico sobre el grafo de la cuadrícula (8 nodos, así que un
-// barrido simple sin cola de prioridad es más que suficiente). Se deja
-// disponible como utilidad general para calcular la ruta más barata entre
-// dos intersecciones cualesquiera, más allá de la selección de carril.
 function dijkstra(origen, destino, colas = medirColas()) {
   const nodos = Object.keys(GRAFO).map(Number);
   const dist = {}; const previo = {}; const visitado = new Set();
@@ -164,11 +145,6 @@ function costoDeCarril(carril, colas) {
   return costo;
 }
 
-// Elige, entre los carriles paralelos disponibles para una dirección, el
-// de menor costo (evita nodos bloqueados y prioriza los menos
-// congestionados). Si el carril preferido ya es el más barato, se
-// respeta tal cual. Esta es la pieza que "minimiza el tráfico": cada
-// vehículo nuevo consulta el estado compartido de la red antes de entrar.
 function elegirMejorCarril(direccion, indicePreferido) {
   const colas = medirColas();
   const grupo = esVertical(direccion) ? CARRILES_VERTICALES : CARRILES_HORIZONTALES;
@@ -213,10 +189,6 @@ function actualizarResumenIncidentes() {
     : 'Sin incidentes activos.';
 }
 
-// Al ocurrir un choque, el nodo se bloquea por completo (todos los
-// semáforos apagados) y notifica a sus vecinos directos en el grafo, que
-// priorizan la dirección que ayuda a drenar el desvío ("comparten
-// información y se enteran del sitio específico del evento").
 function activarIncidente(indice, origen = 'manual') {
   if (indice < 0 || indice >= NUM_NODOS || incidentes.has(indice)) return;
 
@@ -301,8 +273,6 @@ function aplicarSemaforos(interseccion) {
       luz.style.boxShadow = 'none';
     });
 
-    // Los estados internos usan "rojo" y "amarillo", mientras que las
-    // clases del HTML están en femenino: .roja y .amarilla.
     const claseLuz = { rojo: 'roja', amarillo: 'amarilla', verde: 'verde' }[estado];
     const luzActiva = claseLuz ? caja.querySelector(`.${claseLuz}`) : null;
       
@@ -352,19 +322,11 @@ function avanzarCiclo(interseccion) {
     return;
   }
 
-  // Al detectar un vehículo, el nodo abandona el parpadeo nocturno y vuelve
-  // al ciclo completo verde → amarillo → rojo.
   if (interseccion.modoNocturno && interseccion.hayTrafico &&
       (interseccion.fase === 'apagado' || interseccion.fase === 'amarillo')) {
     reactivarNodoNocturno(interseccion);
   }
 
-  // Corte anticipado ("semáforo actuado"): si el par que tiene el verde no
-  // tiene NINGÚN auto esperando y el otro par sí, no tiene sentido agotar
-  // los 8-20s completos con la calle vacía — se recorta a un mínimo seguro
-  // (3s) para ceder el turno antes. Se deja un piso de 3s (el mismo que el
-  // amarillo) para que ningún auto que ya venía entrando se quede sin
-  // tiempo de cruzar.
   if (interseccion.fase === 'verde' && interseccion.restante > 3) {
     const direccionesActivas = DIRECCIONES.filter((d) => parDe(d) === interseccion.parActivo);
     const direccionesOpuestas = DIRECCIONES.filter((d) => parDe(d) !== interseccion.parActivo);
@@ -397,12 +359,6 @@ function reactivarNodoNocturno(interseccion) {
   aplicarSemaforos(interseccion);
 }
 
-
-/**
- * Registra un evento en el panel de eventos del sistema.
- * @param {string} mensaje - El texto a mostrar.
- * @param {string} tipo - 'ambulancia', 'hardware', 'alerta', o 'general'.
- */
 function registrarEventoLog(mensaje, tipo = 'general') {
   const panel = document.getElementById('log-eventos-sistema');
   if (!panel) return;
@@ -422,7 +378,7 @@ function registrarEventoLog(mensaje, tipo = 'general') {
       break;
     case 'ambulancia-rfid':
       icono = '🚑';
-      claseColor = 'log-ambulancia-rfid'; // Azul
+      claseColor = 'log-ambulancia-rfid';
       break;  
     case 'hardware':
       icono = '📡';
@@ -485,12 +441,12 @@ function actualizarBarraProximidad(distancia) {
         porcentaje = 100 - ((distancia - 20) / (100 - 20)) * 95;
     }
 
-    let colorBarra = '#2ed573'; // Verde suave (>= 60cm)
+    let colorBarra = '#2ed573';
 
     if (distancia <= 20) {
-        colorBarra = '#ff4757'; // Rojo (Peligro)
+        colorBarra = '#ff4757';
     } else if (distancia > 20 && distancia <= 60) {
-        colorBarra = '#ffa502'; // Naranja (Precaución)
+        colorBarra = '#ffa502'; 
     }
 
     barra.style.width = `${porcentaje}%`;
@@ -698,10 +654,6 @@ function actualizarSensores() {
         actividadCentral = true;
       }
 
-      // OJO: no usar vehiculo.direccion directo — esa es la dirección con la
-      // que ENTRÓ a la cuadrícula y no cambia cuando el auto dobla. Hay que
-      // calcular con qué dirección llega específicamente a ESTA
-      // intersección, revisando el nodo anterior en su ruta.
       const idxNodo = vehiculo.ruta.indexOf(interseccion.indice);
       if (idxNodo === -1) return;
       const direccionLlegada = idxNodo === 0
@@ -774,9 +726,6 @@ function recalcularDesvio(vehiculo, escenario) {
   const hayIncidenteEnRuta = restante.some((nodo) => incidentes.has(nodo));
   if (!hayIncidenteEnRuta && vehiculo.nodoEspera === null) return;
 
-  // El siguiente nodo es la intersección en la que todavía puede doblar. Se
-  // recalcula antes de entrar en ella, por lo que el desvío ocurre un nodo
-  // antes del incidente y el auto conserva su destino original.
   const nodoDecision = vehiculo.ruta[indiceDecision];
   let resultado = dijkstra(nodoDecision, vehiculo.destino);
   if (!resultado) {
@@ -798,13 +747,6 @@ function recalcularDesvio(vehiculo, escenario) {
   vehiculo.nodoEspera = null;
   if (nuevaRuta.join('-') === vehiculo.ruta.join('-')) return;
 
-  // OJO: "progreso" es un porcentaje de la longitud TOTAL de la ruta. Si se
-  // cambia vehiculo.ruta sin más, ese mismo porcentaje pasa a representar
-  // una posición física distinta (normalmente más adelantada, porque el
-  // desvío suele ser más largo que el camino recto original) — el auto
-  // "salta" hacia adelante, incluso saltándose el paso peatonal. Por eso
-  // hay que congelar su posición física ANTES del cambio de ruta y volver
-  // a expresarla como porcentaje de la ruta NUEVA después del cambio.
   const trayectoViejo = segmentosDeRuta(vehiculo, escenario);
   const distanciaFisicaActual = trayectoViejo?.longitudTotal
     ? (vehiculo.progreso / 100) * trayectoViejo.longitudTotal
@@ -826,13 +768,6 @@ function recalcularDesvio(vehiculo, escenario) {
   registrarEventoIncidente(`Desvío aplicado al vehículo #${vehiculo.id}: INT-${nodoDecision + 1} → INT-${vehiculo.destino + 1}.`, 'info');
 }
 
-// Identifica el tramo de calle FÍSICO que el vehículo está recorriendo en
-// este instante (independientemente de cuál sea el resto de su ruta), y
-// cuánto ha avanzado dentro de ese tramo en píxeles. Esto es necesario
-// porque "progreso" es un porcentaje de la ruta COMPLETA de cada auto, y
-// dos autos con rutas distintas (uno sigue derecho, otro va a doblar más
-// adelante) no son comparables usando ese porcentaje aunque en este
-// momento vayan exactamente por la misma calle, en el mismo carril.
 function segmentoFisicoActual(vehiculo, trayecto) {
   if (!trayecto || !trayecto.longitudTotal) return null;
   const idxControl = trayecto.segmentosControl[vehiculo.siguienteControl];
@@ -853,9 +788,6 @@ function segmentoFisicoActual(vehiculo, trayecto) {
     : (vehiculo.ruta.length > 1 ? direccionEntre(vehiculo.ruta[vehiculo.ruta.length - 2], ultimoNodo) : vehiculo.direccion);
 
   return {
-    // Dos vehículos en el mismo tramo físico (misma calle, mismo sentido,
-    // mismo nodo de destino) comparten este identificador aunque el resto
-    // de su ruta sea diferente.
     id: `${direccionActual}-${nodoObjetivo !== undefined ? nodoObjetivo : `salida${ultimoNodo}`}`,
     avancePx: distanciaRecorrida - distanciaHastaInicio,
     longitudPx: segmento.longitud,
@@ -876,8 +808,6 @@ function debeDetenerseEnSemaforo(vehiculo, escenario, avancePorcentaje) {
   const limite = ((distanciaHastaNodo - margen) / trayecto.longitudTotal) * 100;
   if (vehiculo.progreso + avancePorcentaje < limite) return false;
 
-  // Sin ruta alternativa, el vehículo espera detrás de la cebra aun cuando
-  // el semáforo cambie a verde. Al despejarse el incidente vuelve a calcular.
   if (vehiculo.nodoEspera === nodoActual) return true;
 
   if (vehiculo.emergencia) {
@@ -907,7 +837,6 @@ function actualizarVehiculos() {
     const nombreAmbulancia = vehiculo.esRfid ? "Ambulancia (SENSOR RFID)" : "Ambulancia";
 
     if (nodoActual !== undefined) {
-         // CORRECCIÓN: Usamos la variable ${nombreAmbulancia}
          actualizarEstadoAmbulancia(
             `🚑 ${nombreAmbulancia} en camino: Intersección ${nodoActual + 1} ➔ Intersección ${nodoDestino + 1}`, 0
          );
@@ -915,7 +844,6 @@ function actualizarVehiculos() {
          if (vehiculo.ultimoNodoReportado !== nodoActual) {
             const tipoRegistro = vehiculo.esRfid ? "ambulancia-rfid" : "ambulancia";
             
-            // CORRECCIÓN: Usamos ${nombreAmbulancia} y quitamos las comillas de tipoRegistro
             registrarEventoLog(`${nombreAmbulancia} cruzando Intersección ${nodoActual + 1}`, tipoRegistro);
              
             vehiculo.ultimoNodoReportado = nodoActual; 
@@ -933,14 +861,6 @@ function actualizarVehiculos() {
     });
   });
 
-  // Antes se agrupaba por la ruta COMPLETA de cada auto ("direccion-ruta"),
-  // así que dos vehículos que en este momento van por la misma calle y el
-  // mismo carril, pero que más adelante tomarán caminos distintos (uno
-  // sigue derecho, otro va a doblar), nunca se comparaban entre sí — el de
-  // atrás no "veía" al de adelante y lo traspasaba. Ahora se agrupan por
-  // el tramo físico real (segmentoFisico.id), que identifica la calle y el
-  // sentido de circulación en el que están AHORA MISMO, sin importar el
-  // resto de la ruta de cada uno.
   const carriles = new Map();
   contexto.forEach((info, vehiculo) => {
     if (!info.segmentoFisico) return;
@@ -950,8 +870,6 @@ function actualizarVehiculos() {
   });
 
   carriles.forEach((autosCarril) => {
-    // El más avanzado dentro del tramo físico compartido va al frente,
-    // sin importar qué porcentaje de SU ruta total represente eso.
     autosCarril.sort((a, b) => contexto.get(b).segmentoFisico.avancePx - contexto.get(a).segmentoFisico.avancePx);
     autosCarril.forEach((vehiculo, posicion) => {
       const info = contexto.get(vehiculo);
@@ -986,7 +904,6 @@ function actualizarVehiculos() {
     const nombreAmbulancia = vehiculo.esRfid ? "Ambulancia (SENSOR RFID)" : "Ambulancia";
     const tipoRegistro = vehiculo.esRfid ? "ambulancia-rfid" : "ambulancia";
 
-    // CORRECCIÓN: Usamos la variable ${nombreAmbulancia} en lugar de la palabra fija
     actualizarEstadoAmbulancia(`🚑 ${nombreAmbulancia} llegó a su destino final.`, 0);
     registrarEventoLog(`${nombreAmbulancia} ha llegado a su destino exitosamente.`, tipoRegistro);
 
@@ -1342,7 +1259,6 @@ function conectarMqtt() {
       }
 
       setTimeout(() => {
-        // CORRECCIÓN: Cambiamos nombreOrigen (que no existía) por Intersección ${indiceRandom + 1}
         actualizarEstadoAmbulancia(
           `🚑 Ambulancia (SENSOR RFID) saliendo hacia el ${direccionRandom.toUpperCase()} (Intersección ${indiceRandom + 1})`, 
           5000
@@ -1355,14 +1271,12 @@ function conectarMqtt() {
       crearVehiculo(0, 'oeste');
 
     } else if (tema.endsWith('/norte-int1')) {
-      crearVehiculo(0, 'sur');   // "sur" = entra desde el norte, baja hacia el sur
+      crearVehiculo(0, 'sur');  
 
     } else if (tema.endsWith('/sur-int1')) {
-      crearVehiculo(0, 'norte'); // "norte" = entra desde el sur, sube hacia el norte
+      crearVehiculo(0, 'norte');
 
     } else if (tema.endsWith('/incidente')) {
-      // Wokwi/ESP32 puede publicar el número de intersección (1-8) o
-      // "aleatorio" para simular un choque en un punto al azar.
       const valor = texto.trim().toLowerCase();
       const indice = (valor === 'aleatorio' || valor === '')
         ? Math.floor(Math.random() * NUM_NODOS)
