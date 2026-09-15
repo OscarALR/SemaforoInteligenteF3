@@ -1,4 +1,5 @@
 # 🚦 Semáforo Inteligente — Fase 3
+<img width="1622" height="1001" alt="semaforo" src="https://github.com/user-attachments/assets/291cfaec-9f7c-4624-ac59-a3a894b89719" />
 
 Simulación web de una red de tráfico inteligente para **Lomas del Cacique**. El sistema representa ocho intersecciones conectadas, adapta los ciclos semafóricos a la congestión y reacciona ante incidentes, cruces peatonales y vehículos de emergencia. También puede recibir eventos de sensores ESP32 mediante MQTT.
 
@@ -14,6 +15,7 @@ Simulación web de una red de tráfico inteligente para **Lomas del Cacique**. E
 - **Panel de monitoreo** con métricas de vehículos, espera promedio, emergencias, estados de semáforos e historial de tráfico.
 - **Modo nocturno**, ola verde y controles manuales para inyectar vehículos, peatones e incidentes.
 - **Integración MQTT** con ESP32 a través del broker público HiveMQ.
+<img width="944" height="753" alt="image" src="https://github.com/user-attachments/assets/7bf437f6-708a-4f6e-9da1-eb1986ad1cf9" />
 
 ## Tecnologías
 
@@ -57,6 +59,7 @@ No se requiere instalación ni proceso de compilación.
 | ＋ Agregar vehículo | Inserta manualmente un auto o camión desde una entrada y carril seleccionados. |
 
 ## Integración MQTT / ESP32
+<img width="1929" height="1171" alt="image" src="https://github.com/user-attachments/assets/b21b6710-92f6-49d6-bced-c1f6b2914f46" />
 
 La aplicación se conecta mediante WebSocket a:
 
@@ -104,8 +107,8 @@ Los ciclos semafóricos alternan los pares norte-sur y este-oeste. El tiempo de 
 - Añadir autenticación y tópicos MQTT por dispositivo.
 - Incorporar mapas reales, límites de velocidad y más tipos de vehículos.
 - Agregar pruebas automatizadas para ruteo, prioridad y ciclos semafóricos.
-- Desplegar la simulación con GitHub Pages.
 
 ## Autoría
+Subido en GitHub Pages: https://oscaralr.github.io/SemaforoInteligenteF3/
 
-Desarrollado por [OscarALR](https://github.com/OscarALR) como proyecto de simulación de tráfico inteligente.
+Desarrollado por [OscarALR](https://github.com/OscarALR) como proyecto universitario de simulación de tráfico inteligente.
